@@ -3,7 +3,8 @@ from download_image import DownloadImage
 from check_QR import CHECK_QRCORE
 import multiprocessing
 from multiprocessing import cpu_count
-import os,random,time,logging
+import os,random,time,logging,shutil
+
 
 current_dir = os.path.dirname(__file__) #当前文件路径
 save_img = os.path.join(current_dir,'download','img') #图片保存路径
@@ -28,7 +29,15 @@ def download_process():
     while error < 10:
         url = redis_url_queue.pop()
         if url:
-            check_qrcore.check_copy(downloadimage.download(url))
+            names = downloadimage.download(url)
+            save_names = check_qrcore.check_copy(names)
+            logger.debug(names)
+            logger.debug(save_names)
+            for name in names:#循环
+                if name in save_names:#判断删除还是保存
+                    shutil.move(name,os.path.join(save_qr,os.path.split(name)[-1]))
+                else:#删除文件
+                    os.remove(name)
         else:
             error += 1
         time.sleep(random.choice((1,2,3,4,5)))
