@@ -46,11 +46,9 @@ def download_process():
 
 
 if __name__ == '__main__':
-    num = 10
+    pool = multiprocessing.Pool(10)
 
-    pool = multiprocessing.Pool(num)
-
-    for i in range(0,num):
+    for i in range(0,10):
         pool.apply_async(download_process)
 
     pool.close()

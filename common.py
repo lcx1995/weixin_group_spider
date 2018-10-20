@@ -128,4 +128,6 @@ class CommonOperation(object):
         #step 4
         time.sleep(self.delay)
         self.driver.save_screenshot('screenshot.png')
+
+        self.driver.close()
         self.logger.info('%s结束运行!' % (__file__))

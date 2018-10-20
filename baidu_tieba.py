@@ -2,7 +2,7 @@ import re
 from PIL import Image
 import codecs
 import time
-import download_img
+import download_image
 
 from bs4 import BeautifulSoup
 
@@ -66,7 +66,7 @@ def do():
                 redis_url.add_url_hash(url=_href)#添加
                 logger.info('%s-%s'%('采集',_href))
                 try:
-                    name_l = download_img.download_img(_href)
+                    name_l = download_image.download_img(_href)
                     check_qrcore.check_copy(name_l)
                 except Exception as ex:
                     logger.error('%s-%s' % (_href, ex))

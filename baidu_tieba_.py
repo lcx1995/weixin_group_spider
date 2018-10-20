@@ -9,6 +9,9 @@ from selenium.webdriver.common.by import By
 import logging
 
 import multiprocessing
+from multiprocessing import cpu_count
+
+from tieba_hotsearch import tieba_hot
 
 logging.basicConfig(level = logging.DEBUG,filename='baidu_tieba_.log',format = '%(asctime)s - %(name)s - %(funcName)s - %(levelname)s - %(message)s')
 logging.basicConfig(level = logging.INFO,filename='baidu_tieba_.log',format = '%(asctime)s - %(name)s - %(funcName)s - %(levelname)s - %(message)s')
@@ -44,11 +47,10 @@ class BAIDU_TIEBA(CommonOperation):
             raise RefreshPageException('出错，刷新页面!')
 
 if __name__ == '__main__':
-    keywords = ['进群 常识','评论 事件','崔永元 支持','探讨 进群']
+    tieba_hots = ['美食','闲聊','互点','互赞']
 
-    pool = multiprocessing.Pool(multiprocessing.cpu_count())
-    for i in range(0,multiprocessing.cpu_count()):
-        pool.apply_async(BAIDU_TIEBA(keyword=keywords[i]).start,kwds={'headless':False,'max_page':30},args=())
-
+    pool = multiprocessing.Pool(cpu_count())
+    for keyword in tieba_hots:
+        pool.apply_async(BAIDU_TIEBA(keyword=keyword).start,kwds={'headless':False,'max_page':50},args=())
     pool.close()
     pool.join()
