@@ -4,7 +4,9 @@
 download
 __pycache__
 .idea
+.scrapy
 .pytest_cache/
+.pytest_cache
 
 ###################
 # Compiled source #

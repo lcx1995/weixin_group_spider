@@ -115,13 +115,17 @@ class CommonOperation(object):
                     self.redis_url_queue.push(href) #将待处理链接放入队列 另一个进程处理 download
 
             #下一页
+            error_c = 0
             while 1:
+                if error_c > 10:
+                    break
                 try:
                     self.start_next()
                     time.sleep(query_delay)  # 查询等待时间
                     break
                 except RefreshPageException as ex:
                     self.driver.refresh()
+                    error_c += 1
                     time.sleep(query_delay)  # 查询等待时间
 
 

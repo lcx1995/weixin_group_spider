@@ -31,11 +31,13 @@ class BAIDU_TIEBA(CommonOperation):
         try:
             bs = BeautifulSoup(self.driver.page_source, 'html5lib')
             _hrefs = []
-            for soup in bs.find(class_='s_post_list').find_all('div', recursive=False):
-                _href = self.url + soup.find('span').find('a').attrs['href']
-                _hrefs.append(_href)
+            for soup in bs.find(class_='s_post_list').find_all('div',id=None, recursive=False):
+                _href = soup.find('span').find('a').attrs['href']
+                if _href.startswith('/p/'):
+                    _hrefs.append(self.url + _href)
             return _hrefs
         except Exception as ex:
+            print(ex)
             raise RefreshPageException('出错，刷新页面!')
 
     def start_next(self):
@@ -47,10 +49,10 @@ class BAIDU_TIEBA(CommonOperation):
             raise RefreshPageException('出错，刷新页面!')
 
 if __name__ == '__main__':
-    tieba_hots = ['美食','闲聊','互点','互赞']
+    tieba_hots = ['双十一 能量',]
 
-    pool = multiprocessing.Pool(cpu_count())
+    pool = multiprocessing.Pool(cpu_count()//2)
     for keyword in tieba_hots:
-        pool.apply_async(BAIDU_TIEBA(keyword=keyword).start,kwds={'headless':False,'max_page':50},args=())
+        pool.apply_async(BAIDU_TIEBA(keyword=keyword).start,kwds={'headless':False,'max_page':100},args=())
     pool.close()
     pool.join()

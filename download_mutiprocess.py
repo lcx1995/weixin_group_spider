@@ -29,24 +29,27 @@ def download_process():
     while error < 10:
         url = redis_url_queue.pop()
         if url:
-            names = downloadimage.download(url)
-            save_names = check_qrcore.check_copy(names)
-            logger.debug(names)
-            logger.debug(save_names)
-            for name in names:#循环
-                if name in save_names:#判断删除还是保存
-                    shutil.move(name,os.path.join(save_qr,os.path.split(name)[-1]))
-                else:#删除文件
-                    os.remove(name)
+            try:
+                names = downloadimage.download(url)
+                save_names = check_qrcore.check_copy(names)
+                logger.debug(names)
+                logger.debug(save_names)
+                for name in names:#循环
+                    if name in save_names:#判断删除还是保存
+                        shutil.move(name,os.path.join(save_qr,os.path.split(name)[-1]))
+                    else:#删除文件
+                        os.remove(name)
+            except Exception as ex:
+                print(ex)
         else:
-            error += 1
+            error += 1 #10次url为空
         time.sleep(random.choice((1,2,3,4,5)))
 
     logger.info('%s-%s' % ('end process', os.getpid()))
 
 
 if __name__ == '__main__':
-    pool = multiprocessing.Pool(10)
+    pool = multiprocessing.Pool(cpu_count()//2)
 
     for i in range(0,10):
         pool.apply_async(download_process)
